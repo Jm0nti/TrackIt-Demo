@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TrackIt - Módulo de Integración</title>
+    <!-- Carga de Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Configuración para usar la fuente Inter -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f4f7f9;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center p-4">
+
+    <!-- Contenedor Principal -->
+    <div class="w-full max-w-2xl bg-white shadow-xl rounded-2xl p-8 space-y-6">
+        <h1 class="text-3xl font-bold text-gray-800 text-center border-b pb-4 mb-4">
+            TrackIt: Integración de Seguimiento
+        </h1>
+
+        <!-- Formulario de Búsqueda -->
+        <div class="flex flex-col md:flex-row gap-4">
+            <input type="text" id="trackingInput" placeholder="Ingrese ID de Seguimiento (ej: TRACK0001)"
+                   class="flex-grow p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-150">
+            <button id="searchButton" 
+                    class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg shadow-md transition duration-200 disabled:opacity-50">
+                Buscar Envío
+            </button>
+        </div>
+
+        <!-- Área de Mensajes y Errores -->
+        <div id="messageArea" class="hidden p-3 rounded-lg text-sm transition-all duration-300"></div>
+
+        <!-- Tarjeta de Resultados del Envío -->
+        <div id="shipmentDetails" class="hidden border border-gray-200 rounded-xl overflow-hidden shadow-lg">
+            <div class="bg-blue-500 text-white p-4">
+                <h2 class="text-xl font-bold">Estado Normalizado del Envío</h2>
+                <p class="text-sm" id="trackingIdDisplay"></p>
+            </div>
+            
+            <div class="p-6 grid grid-cols-1 sm:grid-cols-2 gap-4 text-gray-700">
+                <!-- Columna 1 -->
+                <div class="space-y-3">
+                    <p class="font-medium">Estado Interno:</p>
+                    <p id="normalizedStatus" class="text-2xl font-extrabold text-green-600"></p>
+                    
+                    <p class="font-medium">Estado Amigable:</p>
+                    <p id="friendlyStatus" class="text-lg font-semibold"></p>
+                </div>
+
+                <!-- Columna 2 -->
+                <div class="space-y-3 border-t sm:border-t-0 sm:border-l sm:pl-4 sm:pt-0 pt-4 border-gray-100">
+                    <p class="font-medium">Proveedor de Datos:</p>
+                    <p id="carrierName"></p>
+
+                    <p class="font-medium">Última Actualización:</p>
+                    <p id="lastUpdate" class="text-xs text-gray-500 italic"></p>
+
+                    <p class="font-medium">Ubicación (Lat/Lng):</p>
+                    <p id="location"></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Controles de Tiempo Real -->
+        <div id="realtimeControls" class="hidden text-center pt-4 border-t border-gray-100">
+             <p class="text-gray-600 mb-3">Actualización en tiempo real:</p>
+             <button id="toggleRealtime" 
+                     class="py-2 px-4 rounded-full text-sm font-medium transition duration-200 bg-red-100 text-red-600 hover:bg-red-200">
+                Detener Actualización (Poll: 5s)
+            </button>
+        </div>
+    </div>
+
+    <script src="trackit.js"></script> 
+</body>
+</html>
