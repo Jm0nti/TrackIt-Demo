@@ -1,0 +1,60 @@
+/* styles.css — estilos personalizados para TrackIt */
+/* Importa la fuente Inter desde Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+
+:root{
+  --page-bg: #f4f7f9;
+  --card-bg: #ffffff;
+  --muted: #6b7280; /* gray-500 */
+}
+
+/* Tipografía y fondo global */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
+  background-color: var(--page-bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Mejoras visuales para el contenedor principal (complementa Tailwind) */
+/* No sobreescribir clases utilitarias de Tailwind; usar selectores específicos para detalles menores */
+
+/* Marco del iframe del mini-mapa: asegura esquinas redondeadas y border si falta */
+#mapFrame {
+  border-radius: 0.5rem; /* coincide con rounded-lg */
+  border: 1px solid rgba(0,0,0,0.06);
+  width: 100%;
+  height: 200px;
+  display: block;
+}
+
+/* Área de mensajes: añadir transición y padding consistente si JS la muestra/oculta */
+#messageArea {
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+/* Estado "oculto" manejado por Tailwind (.hidden). Para mostrar mensajes de error o éxito, el JS puede alternar clases */
+
+/* Pequeños ajustes para el bloque de detalles */
+#shipmentDetails .bg-blue-500 {
+  background: linear-gradient(90deg, #2563eb 0%, #1e40af 100%);
+}
+
+/* Ajustes responsivos menores para mejorar legibilidad */
+@media (max-width: 640px) {
+  #shipmentDetails .text-2xl { font-size: 1.45rem; }
+}
+
+/* Accesibilidad: foco visible para botones que usan clases personalizadas */
+button:focus {
+  outline: 3px solid rgba(59,130,246,0.25);
+  outline-offset: 2px;
+}
+
+/* Utilidades pequeñas que no existen en Tailwind por defecto en este proyecto (opcional) */
+.text-muted { color: var(--muted); }
+
+/* Fin de styles.css */

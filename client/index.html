@@ -6,14 +6,8 @@
     <title>TrackIt - Módulo de Integración</title>
     <!-- Carga de Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Configuración para usar la fuente Inter -->
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f4f7f9;
-        }
-    </style>
+    <!-- Cargar estilos personalizados -->
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body class="min-h-screen flex flex-col items-center justify-center p-4">
 
@@ -53,8 +47,13 @@
                     <p id="friendlyStatus" class="text-lg font-semibold"></p>
                 </div>
 
-                <!-- Columna 2 -->
-                <div class="space-y-3 border-t sm:border-t-0 sm:border-l sm:pl-4 sm:pt-0 pt-4 border-gray-100">
+                <!-- Mini mapa (Google Maps embed) -->
+                <div id="mapThumbnail" class="hidden p-4 border-t border-gray-100">
+                    <iframe id="mapFrame" width="100%" height="200" class="rounded-lg border" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                </div>
+
+                <!-- Columna 2 (ahora ocupa las 2 columnas en pantallas sm+) -->
+                <div class="space-y-3 border-t border-gray-100 pt-4 sm:col-span-2 sm:border-l-0 sm:pl-0">
                     <p class="font-medium">Proveedor de Datos:</p>
                     <p id="carrierName"></p>
 

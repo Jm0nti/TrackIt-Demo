@@ -5,6 +5,14 @@ const API_BASE_URL = "http://127.0.0.1:8000";
 let currentTrackingId = null;
 let intervalId = null;
 const POLLING_INTERVAL = 5000; // 5 segundos
+// --- Google Maps JS API configuration ---
+// Set your API key here to enable the interactive map. Leave blank to use the simple iframe fallback.
+const GOOGLE_MAPS_API_KEY = ""; // <-- INSERT_YOUR_API_KEY_HERE
+
+// Google Maps runtime variables
+let gmap = null;
+let gmarker = null;
+let mapsLoadPromise = null;
 
 // --- REFERENCIAS DOM ---
 const trackingInput = document.getElementById('trackingInput');
@@ -96,19 +104,66 @@ function setStatusColor(status) {
  * @param {object} data - El objeto TrackItShipment normalizado.
  */
 function renderShipment(data) {
+    // Textual info
     document.getElementById('trackingIdDisplay').textContent = `ID: ${data.tracking_id}`;
     document.getElementById('normalizedStatus').textContent = data.normalized_status;
     document.getElementById('friendlyStatus').textContent = data.friendly_status;
-    document.getElementById('carrierName').textContent = data.carrier_name;
-    // MODIFICACIÓN CLAVE: Se pasa el valor float (timestamp) a la función de formato
+    document.getElementById('carrierName').textContent = data.carrier_name || '';
+    // Fecha (siempre tratar como timestamp en segundos)
     document.getElementById('lastUpdate').textContent = formatBogotaTime(data.last_update);
-    document.getElementById('location').textContent = 
-        `Lat: ${data.current_location.latitude.toFixed(4)}, Lng: ${data.current_location.longitude.toFixed(4)}`;
+
+    // Ubicación — comprobar existencia y tipo numérico
+    const locEl = document.getElementById('location');
+    if (data.current_location && isFinite(Number(data.current_location.latitude)) && isFinite(Number(data.current_location.longitude))) {
+        const lat = Number(data.current_location.latitude);
+        const lng = Number(data.current_location.longitude);
+        locEl.textContent = `Lat: ${lat.toFixed(4)}, Lng: ${lng.toFixed(4)}`;
+    } else {
+        locEl.textContent = 'Ubicación no disponible';
+    }
 
     setStatusColor(data.normalized_status);
     shipmentDetails.classList.remove('hidden');
     realtimeControls.classList.remove('hidden');
+
+    // Map thumbnail
+    const mapDiv = document.getElementById('mapThumbnail');
+    const mapFrame = document.getElementById('mapFrame');
+    if (data.current_location && isFinite(Number(data.current_location.latitude)) && isFinite(Number(data.current_location.longitude))) {
+        const lat = Number(data.current_location.latitude);
+        const lng = Number(data.current_location.longitude);
+        const url = buildGoogleMapsEmbedUrl(lat, lng, 7);
+        if (url && mapFrame) {
+            mapFrame.src = url;
+            mapDiv.classList.remove('hidden');
+        } else if (mapDiv) {
+            mapDiv.classList.add('hidden');
+        }
+    } else {
+        if (mapFrame) mapFrame.src = '';
+        if (mapDiv) mapDiv.classList.add('hidden');
+    }
 }
+
+/**
+ * Construye la URL de embed de Google Maps para las coordenadas dadas.
+ * Usa el parámetro `output=embed` para un iframe embebible.
+ * No requiere API key para este tipo de embed básico, pero para producción
+ * o mapas más avanzados se recomienda usar la Maps JavaScript API con key.
+ * @param {number} lat
+ * @param {number} lng
+ * @param {number} [zoom=15]
+ * @returns {string}
+ */
+function buildGoogleMapsEmbedUrl(lat, lng, zoom = 15) {
+    // Asegurarse de que son números
+    const nLat = Number(lat);
+    const nLng = Number(lng);
+    if (!isFinite(nLat) || !isFinite(nLng)) return '';
+    return `https://www.google.com/maps?q=${encodeURIComponent(nLat)},${encodeURIComponent(nLng)}&z=${zoom}&output=embed`;
+}
+
+/* map handling integrated into renderShipment above */
 
 /**
  * Inicia el proceso de sondeo (polling) para una actualización en tiempo real.
