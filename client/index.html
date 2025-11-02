@@ -54,14 +54,27 @@
 
                 <!-- Columna 2 (ahora ocupa las 2 columnas en pantallas sm+) -->
                 <div class="space-y-3 border-t border-gray-100 pt-4 sm:col-span-2 sm:border-l-0 sm:pl-0">
-                    <p class="font-medium">Proveedor de Datos:</p>
-                    <p id="carrierName"></p>
+                    <!-- Contenedor interno en 2 columnas: información general (izq) y origen/destino (der) -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="space-y-3">
+                            <p class="font-medium">Proveedor de Datos:</p>
+                            <p id="carrierName"></p>
 
-                    <p class="font-medium">Última Actualización:</p>
-                    <p id="lastUpdate" class="text-xs text-gray-500 italic"></p>
+                            <p class="font-medium">Última Actualización:</p>
+                            <p id="lastUpdate" class="text-xs text-gray-500 italic"></p>
 
-                    <p class="font-medium">Ubicación (Lat/Lng):</p>
-                    <p id="location"></p>
+                            <p class="font-medium">Ubicación (Lat/Lng):</p>
+                            <p id="location"></p>
+                        </div>
+
+                        <div class="space-y-3">
+                            <p class="font-medium">Origen:</p>
+                            <p id="origin"></p>
+
+                            <p class="font-medium">Destino:</p>
+                            <p id="destination"></p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -77,5 +90,7 @@
     </div>
 
     <script src="trackit.js"></script> 
+    <!-- Notificación popup in-page -->
+    <div id="notificationPopup" class="hidden fixed top-4 right-4 z-50"></div>
 </body>
 </html>

@@ -8,12 +8,16 @@ class AdapterShipmentA(BaseModel):
     progress_details: str
     location_lat: float
     location_lng: float
+    origin: str = None  # Campo opcional
+    destination: str = None   # Campo opcional
 
 # --- Adaptador para "Simulación B" ---
 # Formato: {"ubicacion": {"latitud": ..., "longitud": ...}}
 class UbicacionB(BaseModel):
     latitud: float
     longitud: float
+    origin: str = None  # Campo opcional
+    destination: str = None   # Campo opcional
     
 class AdapterShipmentB(BaseModel):
     id_seguimiento: str

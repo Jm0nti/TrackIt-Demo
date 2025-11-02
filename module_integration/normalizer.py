@@ -35,7 +35,9 @@ class ShipmentNormalizer:
                     latitude=adapted_data.location_lat,
                     longitude=adapted_data.location_lng
                 ),
-                last_update=time.time() # Usar el timestamp de recepción
+                last_update=time.time(), # Usar el timestamp de recepción
+                origin=adapted_data.origin,
+                destination=adapted_data.destination
             )
             
         elif carrier == "Simulación B":
@@ -52,7 +54,9 @@ class ShipmentNormalizer:
                     latitude=adapted_data.ubicacion.latitud,
                     longitude=adapted_data.ubicacion.longitud
                 ),
-                last_update=time.time()
+                last_update=time.time(),
+                origin=adapted_data.ubicacion.origin if hasattr(adapted_data.ubicacion, 'origin') else None,
+                destination=adapted_data.ubicacion.destination if hasattr(adapted_data.ubicacion, 'destination') else None
             )
         
         else:

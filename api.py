@@ -41,22 +41,34 @@ def generate_mock_shipments(count: int = 100):
     """Genera una base de datos inicial de envíos simulados en formatos A y B."""
     statuses_a = ["DELIVERED", "IN_TRANSIT", "AT_WAREHOUSE"]
     statuses_b = ["Entregado", "En Tránsito", "En Almacén"]
+    # Lista de ciudades de ejemplo para origin/destination
+    cities = [
+        "Bogotá", "Medellín", "Cali", "Barranquilla", "Cartagena",
+        "Quito", "Lima", "Santiago", "Buenos Aires", "Montevideo"
+    ]
     
     for i in range(1, count + 1):
         tracking_id = f"TRACK{i:04d}"
         
         if i % 2 == 0:
             # Simulación A (Formato con códigos de estado en inglés y lat/lng separados)
+            origin = random.choice(cities)
+            # Asegurar que destination sea distinta del origin
+            destination = random.choice([c for c in cities if c != origin])
             raw_data = {
                 "tracking_number": tracking_id,
                 "status_code": random.choice(statuses_a),
                 "progress_details": f"Paquete en el área metropolitana {i}.",
                 "location_lat": random.uniform(30.0, 40.0),
                 "location_lng": random.uniform(-100.0, -80.0),
+                "origin": origin,
+                "destination": destination,
                 "carrier_format": "Simulación A"
             }
         else:
             # Simulación B (Formato con códigos de estado en español y ubicación anidada)
+            origin = random.choice(cities)
+            destination = random.choice([c for c in cities if c != origin])
             raw_data = {
                 "id_seguimiento": tracking_id,
                 "estado": random.choice(statuses_b),
@@ -64,6 +76,8 @@ def generate_mock_shipments(count: int = 100):
                 "ubicacion": {
                     "latitud": random.uniform(30.0, 40.0),
                     "longitud": random.uniform(-100.0, -80.0),
+                    "origin": origin,
+                    "destination": destination,
                 },
                 "carrier_format": "Simulación B"
             }
@@ -114,6 +128,55 @@ async def startup_event():
             REQUEST_COUNTS.clear()
             
     asyncio.create_task(reset_counts())
+
+    # Tarea periódica que actualiza estados cada 10 segundos para simular cambios
+    async def periodic_shipments_updater():
+        """Cada 10s actualiza aleatoriamente algunos envíos para simular cambios de estado."""
+        # Mapas simples para avanzar de estado
+        status_progress_a = ["AT_WAREHOUSE", "IN_TRANSIT", "DELIVERED"]
+        status_progress_b = ["En Almacén", "En Tránsito", "Entregado"]
+
+        while True:
+            await asyncio.sleep(10)
+            # Iterar y actualizar un subconjunto aleatorio de envíos
+            keys = list(MOCK_EXTERNAL_DATABASE.keys())
+            if not keys:
+                continue
+
+            # Elegir algunos envíos a actualizar (10% chance por envío)
+            for tracking_id in keys:
+                if random.random() < 0.10:
+                    data = MOCK_EXTERNAL_DATABASE[tracking_id]
+                    try:
+                        if data.get("carrier_format") == "Simulación A":
+                            # Avanzar el estado si está en la lista
+                            curr = data.get("status_code")
+                            if curr in status_progress_a:
+                                idx = status_progress_a.index(curr)
+                                if idx < len(status_progress_a) - 1:
+                                    data["status_code"] = status_progress_a[idx + 1]
+                            # Mover un poco la ubicación
+                            data["location_lat"] += random.uniform(-0.02, 0.02)
+                            data["location_lng"] += random.uniform(-0.02, 0.02)
+
+                        elif data.get("carrier_format") == "Simulación B":
+                            curr = data.get("estado")
+                            if curr in status_progress_b:
+                                idx = status_progress_b.index(curr)
+                                if idx < len(status_progress_b) - 1:
+                                    data["estado"] = status_progress_b[idx + 1]
+                            # Mover ubicación anidada
+                            if isinstance(data.get("ubicacion"), dict):
+                                data["ubicacion"]["latitud"] += random.uniform(-0.02, 0.02)
+                                data["ubicacion"]["longitud"] += random.uniform(-0.02, 0.02)
+
+                        # (Opcional) imprimir para debugging
+                        # print(f"[Updater] Updated {tracking_id}: {data.get('status_code') or data.get('estado')}")
+                    except Exception:
+                        # No bloquear la tarea por errores en un registro
+                        continue
+
+    asyncio.create_task(periodic_shipments_updater())
 
 
 # -----------------------------------------------------------

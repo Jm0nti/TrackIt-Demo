@@ -57,4 +57,27 @@ button:focus {
 /* Utilidades pequeñas que no existen en Tailwind por defecto en este proyecto (opcional) */
 .text-muted { color: var(--muted); }
 
+/* Notification popup styling */
+.notification-popup {
+  background: #0f172a; /* slate-900 */
+  color: #fff;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 8px 24px rgba(2,6,23,0.6);
+  font-weight: 600;
+  max-width: 320px;
+  transform-origin: top right;
+  animation: popup-in 0.22s ease-out;
+}
+
+@keyframes popup-in {
+  from { opacity: 0; transform: translateY(-6px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes popup-out {
+  from { opacity: 1; transform: translateY(0) scale(1); }
+  to   { opacity: 0; transform: translateY(-6px) scale(0.98); }
+}
+
 /* Fin de styles.css */

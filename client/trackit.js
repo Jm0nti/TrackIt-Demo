@@ -5,9 +5,9 @@ const API_BASE_URL = "http://127.0.0.1:8000";
 let currentTrackingId = null;
 let intervalId = null;
 const POLLING_INTERVAL = 5000; // 5 segundos
-// --- Google Maps JS API configuration ---
-// Set your API key here to enable the interactive map. Leave blank to use the simple iframe fallback.
-const GOOGLE_MAPS_API_KEY = ""; // <-- INSERT_YOUR_API_KEY_HERE
+// Último estado conocido para el envío activo (usado para detectar cambios)
+let lastKnownStatus = null;
+
 
 // Google Maps runtime variables
 let gmap = null;
@@ -122,7 +122,23 @@ function renderShipment(data) {
         locEl.textContent = 'Ubicación no disponible';
     }
 
+    // Origen y Destino (si existen en el payload normalizado)
+    const originEl = document.getElementById('origin');
+    const destinationEl = document.getElementById('destination');
+    if (originEl) originEl.textContent = data.origin || 'No disponible';
+    if (destinationEl) destinationEl.textContent = data.destination || 'No disponible';
+
+    // Detectar cambio de estado y notificar si aplica
+    if (currentTrackingId && currentTrackingId === data.tracking_id) {
+        if (lastKnownStatus !== null && lastKnownStatus !== data.normalized_status) {
+            // Mostrar notificación popup
+            showNotification(`El envío ${data.tracking_id} ha cambiado de estado`);
+        }
+    }
+
     setStatusColor(data.normalized_status);
+    // Actualizar último estado conocido
+    lastKnownStatus = data.normalized_status;
     shipmentDetails.classList.remove('hidden');
     realtimeControls.classList.remove('hidden');
 
@@ -234,8 +250,10 @@ async function fetchShipment(id, isUpdate = false) {
 
         // El JSON retornado ES EL OBJETO TrackItShipment NORMALIZADO
         renderShipment(data);
-        
+
         if (!isUpdate) {
+            // Guardar el estado inicial para evitar notificar al cargar por primera vez
+            lastKnownStatus = data.normalized_status;
             displayMessage(`¡Envío ${id} normalizado con éxito!`, false);
             startPolling(id); // Inicia el sondeo solo después de la primera búsqueda exitosa
         }

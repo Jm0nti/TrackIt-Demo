@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import List, Dict
+from typing import Optional
 
 # Modelo de Ubicación Estandarizado
 class StandardLocation(BaseModel):
@@ -14,3 +14,6 @@ class TrackItShipment(BaseModel):
     current_location: StandardLocation
     carrier_name: str      # Para identificar la fuente (e.g., "Logística A", "Logística B")
     last_update: float     # Timestamp para control de tiempo real
+    # Campos opcionales solicitados: origen y destino (ciudades)
+    origin: Optional[str] = None
+    destination: Optional[str] = None
