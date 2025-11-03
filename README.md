@@ -17,6 +17,9 @@
 
 Permitir a desarrolladores y QA explorar y probar la normalización de datos de envíos. La API genera envíos mock (100 por defecto) en dos formatos distintos, asigna aleatoriamente `origin` y `destination`, y entrega un modelo normalizado que el frontend consume.
 
+
+![Interfaz TrackIt](TrackIt.png)
+
 ## Requisitos
 
 - Python 3.8+
