@@ -2,3 +2,5 @@ pydantic
 fastapi
 uvicorn
 python-multipart
+pytest
+httpx
