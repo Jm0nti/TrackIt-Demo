@@ -1,7 +1,5 @@
 # TrackIt - Demo
 
-Proyecto demo que simula un módulo de integración para seguimiento de envíos (TrackIt). Incluye una API simulada (FastAPI) que normaliza payloads de distintos carriers y un frontend simple (HTML + JS) que consume la API y muestra el estado normalizado.
-
 ## Estructura del repositorio
 
 - `API.py` — Servidor FastAPI que genera datos mock, normaliza usando `module_integration` y expone endpoints para consulta.
